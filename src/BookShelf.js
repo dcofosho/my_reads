@@ -6,6 +6,7 @@ class BookShelf extends React.Component{
 	render(){
 		return(
 			<div className="bookshelf">
+				<div className="bookshelf-title">{this.props.shelftitle}</div>
 				<div className="bookshelf-books">
 					<ol className="books-grid">
 						{this.props.books.map(book =>
@@ -15,7 +16,7 @@ class BookShelf extends React.Component{
 										style={{
 											width: 130,
 											height: 190,
-											backgroundImage: "url(" + book.imageLinks.thumbnail + ")"
+											backgroundImage: "url("+book.imageLinks.thumbnail+")"
                     					}}
 									>
 									</div>
