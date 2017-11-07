@@ -1,4 +1,5 @@
 import React from "react";
+import "./App.css";
 
 class BookShelf extends React.Component{
 	state={}
@@ -12,13 +13,14 @@ class BookShelf extends React.Component{
 								<div className="book-top">
 									<div className="book-cover"
 										style={{
-											width: 128,
-											height: 193,
+											width: 130,
+											height: 190,
 											backgroundImage: "url(" + book.imageLinks.thumbnail + ")"
                     					}}
 									>
 									</div>
 								</div>
+								<div className="book-title">{book.title}</div>
 							</li>
 						)}
 					</ol>
