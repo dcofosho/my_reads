@@ -1,11 +1,15 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import BookShelf from './BookShelf'
+import { Link } from "react-router-dom";
 
 class ListBooks extends React.Component{
 	render(){
 		return(
 			<div className="list-books">
+			<div className="open-search">
+          		<Link to="/search">Search books</Link>
+        	</div>
 				<div className="list-books-content">
 					<BookShelf
 						key="currently-reading"

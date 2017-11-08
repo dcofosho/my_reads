@@ -19,6 +19,17 @@ class SearchBooks extends React.Component{
 	updateQuery = (query) => {
 		this.setState({query: query.trim()})
 	}
+
+  updateBook(book, shelf) {
+    let temp = this.state.books;
+    const bookToUpdate = temp.filter(t => t.id === book.id)[0];
+    bookToUpdate.shelf = shelf;
+    this.setState({
+      books: temp
+    });
+    this.props.onChangeShelf(book, shelf);
+  }
+
 	render(){
     let showingBooks
     if (this.state.query){
@@ -55,14 +66,28 @@ class SearchBooks extends React.Component{
                       backgroundImage: "url(" + book.imageLinks.thumbnail + ")"
                     }}
                   />
+                  <div className="book-shelf-changer">
+                  <select
+                    value={book.shelf}
+                    onChange={e => {
+                    this.updateBook(book, e.target.value);
+                    }}>
+                      <option value="none" disabled>
+                        Select a shelf:
+                      </option>
+                      <option value="currentlyReading">Currently Reading</option>
+                      <option value="wantToRead">Want to Read</option>
+                      <option value="read">Read</option>
+                      <option value="none">None</option>
+                  </select>
+                </div>
                 </div>
                 <div className="book-title">
                   {book.title}
                 </div>
-                {book.authors &&
-                  <div className="book-authors">
-                    {book.authors[0]}
-                  </div>}
+                <div className="book-authors">
+                  {book.authors[0]}
+                </div>
               </li>
             )}
           </ol>
