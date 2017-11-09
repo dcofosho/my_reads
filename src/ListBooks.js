@@ -16,18 +16,21 @@ class ListBooks extends React.Component{
 						books={this.props.books.filter(book=>
 							book.shelf==="currentlyReading")}
 						shelftitle="Currently Reading"
+						onChangeShelf={this.props.handleChangeShelf}
 					 />
 					 <BookShelf
 						key="read"
 						books={this.props.books.filter(book=>
 							book.shelf==="read")}
 						shelftitle="Read"
+						onChangeShelf={this.props.handleChangeShelf}
 					 />
 					 <BookShelf
 						key="want-to-read"
 						books={this.props.books.filter(book=>
 							book.shelf==="wantToRead")}
 						shelftitle="Want to Read"
+						onChangeShelf={this.props.handleChangeShelf}
 					 />
 				</div>
 			</div>
