@@ -34,8 +34,8 @@ class SearchBooks extends React.Component{
     let showingBooks
     if (this.state.query){
       //escape special characters, 'i' means disregard case
-      const match = new RegExp(escapeRegExp(this.state.query), 'i')
-      showingBooks = this.state.books.filter((book) => match.test(book.title))
+      //const match = new RegExp(escapeRegExp(this.state.query), 'i')
+      showingBooks =BooksAPI.search(this.state.query, 20)
     } else {
       showingBooks = this.state.books
     }
