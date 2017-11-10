@@ -1,100 +1,140 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import PropTypes from 'prop-types'
-import escapeRegExp from 'escape-string-regexp'
+import Rx from "rxjs/Rx";
+
 import * as BooksAPI from "./BooksAPI";
+import "./App.css";
 
-class SearchBooks extends React.Component{
-	
-	state ={
-		query: '',
-		books: []
-	}
+class SearchBooks extends React.Component {
+  state = {
+    query: "",
+    books: []
+  };
 
-  componentDidMount(){
-      BooksAPI.getAll().then(data => this.setState({books: data}));
-      console.log(this.state.books)
+  searchInput: Rx.Subject<any>;
+
+  constructor() {
+    super();
+    this.searchInput = new Rx.Subject();
+    this.searchInput.debounceTime(100).subscribe(param => {
+      this.searchBook(param);
+    });
   }
 
-	updateQuery = (query) => {
-		this.setState({query: query.trim()})
-	}
+  updateQuery = (query) => {
+    this.setState({
+      query: query
+    });
+    if (query) {
+      this.searchInput.next(query);
+    } else {
+      this.setState({
+        books: []
+      });
+    }
+  };
+
+  updateBooks(books) {
+    const myBooks = books.map(book => {
+      book.shelf = "none";
+      this.props.books.forEach(bookOnShelf => {
+        if (book.id === bookOnShelf.id) {
+          book.shelf = bookOnShelf.shelf;
+        }
+      });
+      return book;
+    });
+    this.setState({
+      books: myBooks
+    });
+  }
+
+  searchBook(query: string) {
+    BooksAPI.search(query, 20).then(
+      response => {
+        if (response.error) {
+          this.setState({
+            books: []
+          });
+        } else {
+          this.updateBooks(response);
+        }
+      },
+      error => {
+        console.log("error ocurred");
+      }
+    );
+  }
 
   updateBook(book, shelf) {
-    let temp = this.state.books;
-    const bookToUpdate = temp.filter(t => t.id === book.id)[0];
+    let allBooks = this.state.books;
+    const bookToUpdate = allBooks.filter(t => t.id === book.id)[0];
     bookToUpdate.shelf = shelf;
     this.setState({
-      books: temp
+      books: allBooks
     });
     this.props.onChangeShelf(book, shelf);
   }
 
-	render(){
-    let showingBooks
-    if (this.state.query){
-      //escape special characters, 'i' means disregard case
-      //const match = new RegExp(escapeRegExp(this.state.query), 'i')
-      showingBooks =BooksAPI.search(this.state.query, 20)
-    } else {
-      showingBooks = this.state.books
-    }
-		return(
-			<div className="search-books">Search Books
-				<div className="search-books-bar">
-					<Link to="/" className="close-search">Close</Link>
-					<div className="search-books-input-wrapper">
-						<input
-						type="text"
-						placeholder="Search books"
-						value={this.state.query}
-						onChange={event => this.updateQuery(event.target.value)}
-						/>
-					</div>
-				</div>
-
+  render() {
+    return (
+      <div className="search-books">
+        <div className="search-books-bar">
+          <Link to="/" className="close-search">
+            Go to My Reads
+          </Link>
+          <div className="search-books-input-wrapper">
+            <input
+              type="text"
+              placeholder="Search"
+              value={this.state.query}
+              onChange={event => this.updateQuery(event.target.value)}
+            />
+          </div>
+        </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {showingBooks.map(book =>
+            {this.state.books.map(book =>
               <li key={book.id} className="book">
                 <div className="book-top">
                   <div
                     className="book-cover"
                     style={{
-                      width: 128,
-                      height: 193,
+                      width: 130,
+                      height: 190,
                       backgroundImage: "url(" + book.imageLinks.thumbnail + ")"
                     }}
                   />
                   <div className="book-shelf-changer">
-                  <select
-                    value={book.shelf}
-                    onChange={e => {
-                    this.updateBook(book, e.target.value);
-                    }}>
+                    <select
+                      value={book.shelf}
+                      onChange={e => {
+                        this.updateBook(book, e.target.value);
+                      }}
+                    >
                       <option value="none" disabled>
-                        Select a shelf:
+                        Select Book Shelf
                       </option>
                       <option value="currentlyReading">Currently Reading</option>
                       <option value="wantToRead">Want to Read</option>
                       <option value="read">Read</option>
                       <option value="none">None</option>
-                  </select>
-                </div>
+                    </select>
+                  </div>
                 </div>
                 <div className="book-title">
                   {book.title}
                 </div>
-                <div className="book-authors">
-                  {book.authors[0]}
-                </div>
+                {book.authors &&
+                  <div className="book-authors">
+                    {book.authors[0]}
+                  </div>}
               </li>
             )}
           </ol>
         </div>
-			</div>
-		)
-	}
+      </div>
+    );
+  }
 }
-
-export default SearchBooks
+export default SearchBooks;

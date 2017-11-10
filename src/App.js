@@ -26,16 +26,12 @@ class BooksApp extends React.Component {
     });
   }
 
-  searchBooksOnShelf(query){
-    BooksAPI.search(query, 15).then(data=>{data});
-  }
-
   
   render() {
     return (
       <div className="App">
         <Route path = "/" exact render= {()=><ListBooks books={this.state.books}/>} />
-        <Route path="/search" render={()=><SearchBooks books={this.state.books} onChangeShelf={this.handleChangeShelf} onSearch={this.searchBooksOnShelf}/>} />
+        <Route path="/search" render={()=><SearchBooks books={this.state.books} onChangeShelf={this.handleChangeShelf} />} />
       </div>
     );
   }
