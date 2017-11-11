@@ -25,6 +25,7 @@ class BookShelf extends React.Component{
 		BooksAPI.update(book, shelf).then(response=>{
 			this.getBooksOnShelf();
 		});
+		this.render();
 	}
 
 	updateBook(book, shelf) {
@@ -34,7 +35,7 @@ class BookShelf extends React.Component{
 	    this.setState({
 	      books: temp
 	    });
-	    this.handleChangeShelf(book, shelf);
+	    this.props.onChangeShelf(book, shelf);
 	}
 
 	render(){
